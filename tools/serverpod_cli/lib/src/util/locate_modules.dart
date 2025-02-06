@@ -166,7 +166,7 @@ String moduleNameFromServerPackageName(String packageDirName) {
     return 'serverpod';
   }
   if (!packageName.endsWith(_serverSuffix)) {
-    throw Exception('Not a server package ($packageName)');
+    log.error("Hint: Found a server package that doesn't end with a suffix of $_serverSuffix: $packageName\n Please make sure that all server packages end with $_serverSuffix.");
   }
   return packageName.substring(0, packageName.length - _serverSuffix.length);
 }
