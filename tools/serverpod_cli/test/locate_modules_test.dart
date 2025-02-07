@@ -18,6 +18,9 @@ void main() {
 
       moduleName = moduleNameFromServerPackageName('serverpod-1.1.1');
       expect(moduleName, 'serverpod');
+
+      moduleName = moduleNameFromServerPackageName('test-different-name');
+      expect(moduleName, null);
     });
   });
 }

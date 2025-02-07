@@ -334,6 +334,9 @@ class MigrationGenerator {
     var selectedPaths = modulePaths.where(
       (modulePath) {
         var moduleName = _extractModuleNameFromPath(modulePath);
+        if (moduleName == null) {
+          return false;
+        }
         return selectedModules.any((module) => module.name == moduleName);
       },
     );
@@ -342,6 +345,9 @@ class MigrationGenerator {
 
     for (var modulePath in selectedPaths) {
       var moduleName = _extractModuleNameFromPath(modulePath);
+      if (moduleName == null) {
+        continue;
+      }
 
       var versionName = selectedModules
           .firstWhere((e) => e.name == moduleName)
@@ -387,7 +393,7 @@ class MigrationGenerator {
     );
   }
 
-  String _extractModuleNameFromPath(Uri path) {
+  String? _extractModuleNameFromPath(Uri path) {
     var packageName = path.pathSegments.last;
     return moduleNameFromServerPackageName(packageName);
   }

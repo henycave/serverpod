@@ -30,6 +30,9 @@ Future<List<ModuleConfig>?> locateModules({
           continue;
         }
         var moduleName = moduleNameFromServerPackageName(packageName);
+        if (moduleName == null) {
+          continue;
+        }
 
         var packageSrcRoot = packageInfo.packageUriRoot;
         var moduleProjectRoot = List<String>.from(packageSrcRoot.pathSegments)
@@ -159,14 +162,16 @@ Future<List<Uri>> locateAllModulePaths({
   return paths;
 }
 
-String moduleNameFromServerPackageName(String packageDirName) {
+String? moduleNameFromServerPackageName(String packageDirName) {
   var packageName = packageDirName.split('-').first;
 
   if (packageName == 'serverpod') {
     return 'serverpod';
   }
   if (!packageName.endsWith(_serverSuffix)) {
-    throw Exception('Not a server package ($packageName)');
+    log.error('Not a server package ($packageName). Please make sure your '
+        'server package name ends with \'$_serverSuffix\'.');
+    return null;
   }
   return packageName.substring(0, packageName.length - _serverSuffix.length);
 }
