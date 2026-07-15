@@ -15,11 +15,12 @@ Future<void> refreshAnalysisContext(
 ) async {
   for (final changedFile in changedFiles) {
     var absolutePath = p.canonicalize(File(changedFile).absolute.path);
-    final context = tryContextFor(collection, absolutePath);
+    final context = findContextFor(collection, absolutePath);
     if (context != null) {
       context.changeFile(absolutePath);
     }
   }
+
   for (final context in collection.contexts) {
     await context.applyPendingFileChanges();
   }
@@ -44,14 +45,18 @@ AnalysisContextCollection createAnalysisContextCollection(
 
 /// Returns the [AnalysisContext] containing [path], or `null` if [path] is
 /// not included in this collection.
-AnalysisContext? tryContextFor(
+AnalysisContext? findContextFor(
   AnalysisContextCollection collection,
   String path,
 ) {
-  try {
-    //Testing this path
-    return collection.contextFor(p.canonicalize(path));
-  } on StateError {
-    return null;
+  final absolutePath = p.canonicalize(p.absolute(path));
+
+  for (final context in collection.contexts) {
+    final contextRoot = p.canonicalize(context.contextRoot.root.path);
+    if (p.isWithin(contextRoot, absolutePath) ||
+        p.equals(contextRoot, absolutePath)) {
+      return context;
+    }
   }
+  return null;
 }

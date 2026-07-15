@@ -308,7 +308,7 @@ class FutureCallsAnalyzer {
   /// Resolves a single file to a [ResolvedLibraryResult].
   Future<ResolvedLibraryResult?> _resolveLibrary(String filePath) async {
     final canonicalFilePath = p.canonicalize(filePath);
-    final context = tryContextFor(collection, canonicalFilePath);
+    final context = findContextFor(collection, canonicalFilePath);
     if (context == null) return null;
 
     final result = await context.currentSession.getResolvedLibrary(
